@@ -1,0 +1,40 @@
+<!-- <%- layout('/layouts/boilerplate.ejs') %> -->
+
+<!-- <body> -->
+    <!-- <h1>All Listings</h1> -->
+    <!-- <form method="GET" action="/listings/new">
+      <div class="row row-cols-lg-4 row-cols-md-2 row-cols-md-1">
+        <% for(let listing of allListings) { %>
+          <div class="card">
+            <a href="/listings/<%= listing._id %>" >
+            <img src="<%= listing.image %>" class="card-img-top" alt="listing_image">
+            <div class="card-body">
+              <p class="card-text">
+                <b class="title">  <%= listing.title %></b>
+                <br>
+                <b class="price">
+                  From Rs: 
+                  <%= (listing.price || 0).toLocaleString("en-PK") %>
+                </b>
+                <br>
+                <span class="<%= listing.stock === 'In Stock' ? 'in-stock' : 'out-stock' %>">
+                  <%= listing.stock %>
+                </span>
+                <br>
+                <div class="companay"> <%= listing.company %></div>
+
+                <% if (listing.stock === 'In Stock') { %> 
+                  <form method="POST" action="/cart/add">
+                    <input type="hidden" name="productId" value="<%= listing._id %>">
+                    <button class="btn btn-primary" type="submit">Add to Cart</button>
+                  </form>
+                  
+                <% } %> 
+              </p>
+            </div>
+           </a>
+          </div>
+        <% } %>
+      </div>
+    </form>
+</body> -->

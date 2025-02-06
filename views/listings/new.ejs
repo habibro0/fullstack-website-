@@ -1,0 +1,135 @@
+<%- layout('/layouts/boilerplate.ejs') %>
+
+<body>
+    <div class="row">
+        <div class="col-8 offset-2">
+            <form action="/listings" method="POST"  enctype="multipart/form-data" novalidate class="needs-validation" > 
+                <br><br>
+                <b><h1>Create New Listing</h1></b>
+
+                <div>
+                    <label for="title" class="form-label">Title :</label>
+                    
+                    <br>
+                    <input name="listing[title]" placeholder="Enter title" type="text" class="form-control" required />
+                    <div class="valid-feedback">Title </div>
+                </div>
+
+                <br />
+                <div class="mb-3">
+                    <label for="title" class="form-label ">Description :</label>
+                    <br>
+                    <textarea name="listing[description]" placeholder="Enter description" required class="form-control"></textarea>
+                </div>
+                <br>
+                <div>
+                    <label for="title" class="form-label">Enter Brand :</label>
+                    <input name="listing[company]" placeholder="Enter company name" type="text" required class="form-control" />
+                    <div class="valid-feedback">ok brand </div>
+
+                </div>
+                <br><br>
+
+                <!-- Stock Field with options -->
+                <label for="stock" required>Stock Status:</label>
+                <select name="listing[stock]" id="stock">
+                    <option value="In Stock" class="in-stock">In Stock</option>
+                    <option value="Out of Stock" class="out-stock">Out of Stock</option>
+                </select>
+                <br /><br />
+                
+                <!-- Image Upload with Zoom -->
+                <div>
+                    <label for="image" class="form-label">Upload Image :</label>
+                    <input name="image" type="file" class="form-control" required />
+                    <div class="valid-feedback">ok img </div>
+
+                    <input
+                        id="zoomImage"
+                        name="listing[image]"
+                        placeholder="Enter image URL/Link"
+                        type="text"
+                        class="form-control"
+                       
+                    />
+                </div>
+                <br />
+                <!-- Zoomed Image -->
+                <div class="image-preview">
+                    <h4>Image Preview:</h4>
+                    <img
+                        id="zoomPreview"
+                        src="/images/mali.png" 
+                        data-zoom-image="/images/mali-large.png"
+                        alt="Image Preview"
+                        style="width: 300px;"
+
+                    />
+                </div>
+                <br /><br />
+
+                <div class="col-4">
+                    <div>
+                        <label for="price" class="form-label">Enter Price:</label>
+                    </div>
+                    
+                    <input name="listing[pricePak]" placeholder="Enter pricepak" type="number" class="form-control" required />
+                    <input name="listing[priceUsa]" placeholder="Enter price" type="number" class="form-control" required />
+                    <input name="listing[priceUae]" placeholder="Enter price" type="number" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="category">Category:</label>
+                    <select name="listing[category]" id="category" class="form-control" required>
+                        <option value="">-- Select a Category --</option>
+                        <option value="All Items">All items</option>
+                <option value="Khaas Mayar">Khaas Mayar</option>
+                <option value="Biscuits & Cookies">Biscuits & Cookies</option>
+                <option value="Ready-to-Eat Snacks">Ready-to-Eat Snacks</option>
+                <option value="Nimco & Dry Snacks">Nimco & Dry Snacks</option>
+                <option value="Beverages & Cold Drinks">Beverages & Cold Drinks</option>
+                <option value="Spices & Condiments">Spices & Condiments</option>
+                <option value="Noodles & Pasta">Noodles & Pasta</option>
+                    </select>
+                </div>
+                
+                
+                <br /><br />
+                <input name="listing[country]" placeholder="Enter country" type="text" class="form-control" />
+                <br />
+                <input name="listing[location]" placeholder="Enter location" type="text" class="form-control" />
+                <br><br />
+                <div class="row row-5">
+                    <button class="btn btn-dark bg-primary">Add</button>
+                </div>
+                <br><br>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+    <script src="/javascript/script.js"></script>
+    <script>
+        // Initialize Zoom Feature
+        $(document).ready(function () {
+            // ElevateZoom for Image Preview
+            $("#zoomPreview").elevateZoom({
+                zoomType: "lens",
+                lensShape: "round",
+                lensSize: 550,
+            });
+
+            // Change preview dynamically
+            $("#zoomImage").on("input", function () {
+                const imageUrl = $(this).val();
+                $("#zoomPreview").attr("src", imageUrl);
+                $("#zoomPreview").data("zoom-image", imageUrl).elevateZoom({
+                    zoomType: "lens",
+                    lensShape: "round",
+                    lensSize: 550,
+                });
+            });
+        });
+    </script>
+</body>

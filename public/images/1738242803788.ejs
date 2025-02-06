@@ -1,0 +1,133 @@
+<%- layout('/layouts/boilerplate.ejs') %>
+
+<body>
+  <h3 class="text-center my-4">Edit your Listing</h3>
+  <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" enctype="multipart/form-data">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 offset-md-2">
+          <!-- Title Field -->
+          <div class="mb-3">
+            <label for="title" class="form-label">Title:</label>
+            <input
+              name="listing[title]"
+              type="text"
+              value="<%= listing.title %>"
+              class="form-control"
+              placeholder="Product Title"
+            />
+          </div>
+
+          <!-- Description Field -->
+          <div class="mb-3">
+            <label for="description" class="form-label">Description:</label>
+            <textarea
+              name="listing[description]"
+              class="form-control"
+              rows="4"
+              placeholder="Enter description"
+            ><%= listing.description %></textarea>
+          </div>
+
+          <!-- Image Field (URL + File Upload) -->
+          <div class="mb-3">
+            <label for="image" class="form-label">Image:</label>
+            <input
+              name="listing[image]"
+              type="text"
+              class="form-control"
+              placeholder="Enter Image URL"
+              value="<%= listing.image %>"
+            />
+            <div class="text-center my-2">OR</div>
+            <input
+              name="imageFile"
+              type="file"
+              class="form-control"
+              accept="image/*"
+            />
+          </div>
+          <br>
+          <div class="form-group">
+            <label for="category">Category:</label>
+            <select name="listing[category]" id="category" class="form-control" required>
+                <option value="">-- Select a Category --</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Toys">Toys</option>
+                <option value="Books">Books</option>
+                <option value="Food">Food</option>
+                <option value="Health">Health</option>
+                <option value="Sports">Sports</option>
+                <option value="All Items">All Items</option>
+            </select>
+        </div>
+        <br>
+
+          <!-- Price Field -->
+          <div class="mb-3">
+            <label for="price" class="form-label">Price:</label>
+            <input
+              name="listing[price]"
+              type="number"
+              class="form-control"
+              placeholder="Enter Price"
+              value="<%= listing.price %>"
+            />
+          </div>
+
+          <!-- Country Field -->
+          <div class="mb-3">
+            <label for="country" class="form-label">Country:</label>
+            <input
+              name="listing[country]"
+              type="text"
+              class="form-control"
+              placeholder="Enter Country"
+              value="<%= listing.country %>"
+            />
+          </div>
+
+          <!-- Location Field -->
+          <div class="mb-3">
+            <label for="location" class="form-label">Location:</label>
+            <input
+              name="listing[location]"
+              type="text"
+              class="form-control"
+              placeholder="Enter Location"
+              value="<%= listing.location %>"
+            />
+          </div>
+
+          <!-- Stock Dropdown -->
+          <div class="mb-3">
+            <label for="stock" class="form-label">Stock Status:</label>
+            <select name="listing[stock]" id="stock" class="form-select">
+              <option value="In Stock" <%= listing.stock === 'In Stock' ? 'selected' : '' %>>In Stock</option>
+              <option value="Out of Stock" <%= listing.stock === 'Out of Stock' ? 'selected' : '' %>>Out of Stock</option>
+            </select>
+          </div>
+
+          <!-- Brand Field -->
+          <div class="mb-3">
+            <label for="company" class="form-label">Brand:</label>
+            <input
+              name="listing[company]"
+              type="text"
+              class="form-control"
+              placeholder="Enter Brand Name"
+              value="<%= listing.company %>"
+            />
+          </div>
+
+          <!-- Submit Button -->
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary">Update Listing</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</body>

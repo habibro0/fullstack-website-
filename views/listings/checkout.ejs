@@ -1,0 +1,18 @@
+<%- layout('/layouts/boilerplate.ejs') %>
+<body>
+  <h1>Checkout</h1>
+  <form method="POST" action="/checkout">
+    <label for="address">Name:</label>
+    <input type="text" name="name" id="address" required>
+    <label for="address">Contact No:</label>
+    <input type="text" name="contact no" id="address" required>
+    <label for="address">Address:</label>
+    <input type="text" name="address" id="address" required>
+    <label for="city">City:</label>
+    <input type="text" name="city" id="city" required>
+    <label for="zip">ZIP Code:</label>
+    <input type="text" name="zip" id="zip" required>
+    <button class="btn btn-primary" type="submit">Place Order</button>
+  </form>
+</body>
+

@@ -1,0 +1,86 @@
+<%- layout('/layouts/boilerplate.ejs') %>
+
+<body>
+  <h1 class="cart-heading">Your Cart</h1>
+  
+  <% if (cartDetails.length > 0) { %>
+    <div class="cart-items-container">
+      <% let totalCartPrice = 0; %>
+      <% cartDetails.forEach(item => { 
+           totalCartPrice += item.price * item.quantity;
+      %>
+        <div class="cart-item">
+          <div class="cart-item-img">
+            <img src="<%= item.image %>" alt="Product Image" width="100">
+          </div>
+          <div class="cart-item-details">
+            <h3><%= item.title %></h3>
+            <p>
+              Price: Rs. 
+              <span id="price-<%= item._id %>">
+                <%= item.price * item.quantity %>
+              </span>
+            </p>
+            <p class="quantity-control">
+              Quantity:
+              <button onclick="updateQuantity('<%= item._id %>', -1)" class="btn btn-secondary">-</button>
+              <span id="quantity-<%= item._id %>">
+                <%= item.quantity %>
+              </span>
+              <button onclick="updateQuantity('<%= item._id %>', 1)" class="btn btn-secondary">+</button>
+            </p>
+            <form method="POST" action="/cart/remove">
+              <input type="hidden" name="productId" value="<%= item._id %>">
+              <button class="btn btn-danger remove-btn">Remove</button>
+            </form>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+
+    <!-- Show Total Cart Price -->
+    <div class="total-price-container">
+      <h3>Total Cart Price: Rs. <span id="total-cart-price"><%= totalCartPrice %></span></h3>
+      <a href="/checkout" class="btn btn-success checkout-btn">Proceed to Checkout</a>
+    </div>
+  <% } else { %>
+    <p>Your cart is empty.</p>
+  <% } %>
+
+  <!-- JavaScript for updating quantity -->
+  <script>
+    async function updateQuantity(productId, change) {
+      const quantityElement = document.getElementById(`quantity-${productId}`);
+      const priceElement = document.getElementById(`price-${productId}`);
+      const totalCartPriceElement = document.getElementById("total-cart-price");
+  
+      let currentQuantity = parseInt(quantityElement.innerText, 10);
+      const newQuantity = currentQuantity + change;
+  
+      if (newQuantity < 1) return; // Prevent quantity less than 1
+  
+      try {
+        const response = await fetch('/cart/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ productId, quantity: newQuantity }),
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+  
+          // Update Quantity and Price in UI
+          quantityElement.innerText = data.quantity;
+          priceElement.innerText = data.totalPrice;
+  
+          // Update Total Cart Price in UI
+          totalCartPriceElement.innerText = data.totalCartPrice;
+        } else {
+          alert('Failed to update quantity. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error updating quantity:', error);
+        alert('An error occurred. Please try again.');
+      }
+    }
+  </script>

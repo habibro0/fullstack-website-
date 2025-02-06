@@ -1,0 +1,80 @@
+<%- layout('/layouts/boilerplate.ejs') %>
+<body class="order-details-body">
+  <div class="order-details-container">
+    <h1 class="order-title">Order Details</h1>
+
+    <!-- Shipping Information -->
+    <div class="shipping-info">
+      <p><strong>Name:</strong> <%= order.address || 'Name not available' %></p>
+      <p><strong>Contact No:</strong> <%= order.address || 'Contact not available' %></p>
+      <p><strong>Address:</strong> <%= order.address || 'Address not available' %></p>
+      <p><strong>City:</strong> <%= order.city || 'City not available' %></p>
+      <p><strong>ZIP Code:</strong> <%= order.zip || 'ZIP code not available' %></p>
+    </div>
+
+    <!-- Order Time -->
+    <p class="order-time"><strong>Order Time:</strong> 
+      <%= new Date(order.createdAt).toLocaleString('en-GB', { hour12: false }) || 'Order time not available' %>
+    </p>
+
+    <!-- Timer -->
+    <p class="order-timer"><strong>Time Remaining:</strong> <span id="timer" class="timer-text"></span></p>
+
+    <!-- Items Table -->
+    <h2 class="items-title">Items in your Order:</h2>
+    <div class="table-responsive">
+      <table class="order-items-table">
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% order.items.forEach(item => { %>
+            <tr>
+              <td><%= item.productId.title || 'Product name not available' %></td>
+              <td><%= item.quantity || 0 %></td>
+              <td>&#8360; <%= item.productId.price ? item.productId.price.toLocaleString("en-PK") : 'Price not available' %></td>
+              <td>&#8360; <%= (item.productId.price && item.quantity) ? (item.productId.price * item.quantity).toLocaleString("en-PK") : 'Total not available' %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="total-amount">Total Amount: &#8360; 
+      <%= order.items.reduce((total, item) => total + (item.productId.price * item.quantity), 0).toLocaleString("en-PK") || 'Total not available' %>
+    </h3>
+  </div>
+
+  <script>
+    // Order time and current time
+    const orderTime = new Date("<%= order.createdAt %>").getTime();
+    const expiryTime = orderTime + 24 * 60 * 60 * 1000; // 24 hours later
+
+    // Timer update function
+    function updateTimer() {
+      const now = new Date().getTime();
+      const timeRemaining = expiryTime - now;
+
+      if (timeRemaining <= 0) {
+        document.getElementById("timer").textContent = "Expired";
+        alert("This order has been cancelled because 24 hours have passed.");
+        return;
+      }
+
+      const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+      document.getElementById("timer").textContent = `${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    // Update timer every second
+    updateTimer();
+    setInterval(updateTimer, 1000);
+  </script>
+</body>

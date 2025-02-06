@@ -1,0 +1,12 @@
+<h2>Your Favorite Items</h2>
+<div class="favorites-container">
+  <% favorites.forEach(item => { %>
+    <div class="favorite-card">
+      <a href="/listings/<%= item._id %>">
+        <img src="<%= item.image %>" alt="<%= item.name %>">
+        <h3><%= item.name %></h3>
+        <p>Price: <%= item.price %></p>
+      </a>
+    </div>
+  <% }) %>
+</div>

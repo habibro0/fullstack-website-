@@ -1,0 +1,42 @@
+<%- layout('/layouts/boilerplate.ejs') -%>
+
+<body>
+  <div class="listing-container my-5">
+    <div class="listing-card shadow-lg rounded">
+      <!-- Listing Image -->
+      <div class="listing-image-container">
+        <img class="listing-card-img" src="<%= listing.image %>" alt="listing image">
+      </div>
+
+      <div class="listing-card-body">
+        <!-- Title -->
+        <h5 class="listing-title"><%= listing.title %></h5>
+
+        <!-- Description, Price, and Stock in one line -->
+        <div class="listing-details">
+          <span class="listing-description"><%= listing.description %></span>
+          <span class="listing-price">&#8360; 
+            <%= listing.price ? listing.price.toLocaleString("en-PK") : "N/A" %>
+          </span>
+          
+          <span class="listing-stock <%= listing.stock === 'In Stock' ? 'listing-stock-available' : 'listing-stock-unavailable' %>">
+            <%= listing.stock %>
+          </span>
+        </div>
+
+        <!-- Location and Company -->
+        <!-- <p class="listing-location"><strong>Location:</strong> <%= listing.location %><%= listing.country %></p> -->
+        <p class="listing-company"><strong>Brand:</strong> <%= listing.company %></p>
+      </div>
+
+      <!-- Buttons -->
+      <div class="listing-card-footer">
+        <a class="btn listing-edit-btn" href="/listings/<%= listing._id %>/edit">Edit</a>
+
+        <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE" class="d-inline-block">
+          <button class="btn listing-delete-btn">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>

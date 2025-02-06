@@ -1,0 +1,524 @@
+<%- layout('/layouts/boilerplate.ejs') %>
+
+<body>
+
+    <div id="selectedCountryDisplay">
+        <p> <span id="selectedCountry"></span></p>
+
+    </div>
+
+    <!-- Category Filter -->
+    <% if (typeof selectedCategory === "undefined") { %>
+        <% selectedCategory = "All Items"; %>
+    <% } %>
+
+    <div class="category-filter">
+        <div class="category-item">
+            <button class="category-btn" onclick="filterCategory('All Items')">
+                <img src="/images/pak.jpg" alt="All Items" class="category-image">
+                <span>All Items</span>
+            </button>
+        </div>
+        <div class="category-item">
+            <button class="category-btn" onclick="filterCategory('Khaas Mayar')">
+                <img src="/images/pak4.png" alt="Khaas Mayar" class="category-image">
+                <span>Khaas Mayar</span>
+            </button>
+        </div>
+        <div class="category-item">
+            <button class="category-btn" onclick="filterCategory('Biscuits & Cookies')">
+                <img src="/images/pak2.png" alt="Biscuits & Cookies" class="category-image">
+                <span>Biscuits & Cookies</span>
+            </button>
+        </div>
+        <div class="category-item">
+            <button class="category-btn" onclick="filterCategory('Ready-to-Eat Snacks')">
+                <img src="/images/pak3.png" alt="Ready-to-Eat Snacks" class="category-image">
+                <span>Ready-to-Eat Snacks</span>
+            </button>
+        </div>
+        <div class="category-item">
+            <button class="category-btn" onclick="filterCategory('Nimco & Dry Snacks')">
+                <img src="/images/pak6.png" alt="Nimco & Dry Snacks" class="category-image">
+                <span>Nimco & Dry Snacks</span>
+            </button>
+        </div>
+        <div class="category-item">
+            <button class="category-btn" onclick="filterCategory('Beverages & Cold Drinks')">
+                <img src="/images/pak5.png" alt="Beverages & Cold Drinks" class="category-image">
+                <span>Beverages & Cold Drinks</span>
+            </button>
+        </div>
+
+        <div class="category-item">
+            <button class="category-btn" onclick="filterCategory('Spices & Condiments')">
+                <img src="/images/pak2.png" alt="Spices & Condiments" class="category-image">
+                <span>Spices & Condiments</span>
+            </button>
+        </div>
+        <div class="category-item">
+            <button class="category-btn" onclick="filterCategory('Noodles & Pasta')">
+                <img src="/images/pak2.png" alt="Noodles & Pasta" class="category-image">
+                <span>Noodles & Pasta</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="listingsContainer">
+        <% for (let listing of allListings) { %>
+            <div class="listing" data-category="<%= listing.category %>" style="display: <%= selectedCategory === 'All Items' || listing.category === selectedCategory ? 'block' : 'none' %>">
+                
+                    <div class="listing-card">
+                       
+                        <button class="favorite-btn" onclick="toggleFavorite('<%= listing._id %>', '<%= listing.title %>',  '<%= listing.image %>')">
+    <i class="fa fa-heart" id="heart-<%= listing._id %>"></i>
+</button>
+
+                        <a href="/listings/<%= listing._id %>">
+                        <img src="<%= listing.image %>" alt="listing_image" class="listing-img">
+                        </a>
+                        <a href="/listings/<%= listing._id %>">
+                        <div class="listing-info">
+                            <h5 class="listing-title"><%= listing.title %></h5>
+
+                            <i class="favorite-icon" data-id="1" data-name="Product Name" data-price="<%= listing.title %>" data-image="product.jpg"></i>
+
+
+                            <p class="price" data-id="<%= listing._id %>"> Price Not Available </p>
+                            <span class="stock-status <%= listing.stock === 'In Stock' ? 'in-stock' : 'out-stock' %>"><%= listing.stock %></span>
+                           
+                            <div class="company"><%= listing.company %></div>
+                        </a>
+                            <!-- <div class="category"> <%= listing.category || 'Uncategorized' %></div> -->
+                            <% if (listing.stock === 'In Stock') { %>
+                                <form method="POST" action="/cart/add">
+                                    <input type="hidden" name="productId" value="<%= listing._id %>">
+                                    <button type="submit" class="add-to-cart-btn">Add to Cart</button>
+                                </form>
+                            <% } %>
+                        </div>
+                    </div>
+               
+            </div>
+        <% } %>
+
+        <div id="countryPopup" class="popup">
+            <div class="popup-content">
+                <h3>Select Your Country</h3>
+                <select id="countrySelect" onchange="setCountry()">
+                    <option value="Pakistan">Countries</option>
+                    <option value="Pakistan">Pakistan</option>
+                    <option value="UAE">UAE</option>
+                    <option value="USA">USA</option>
+                </select>
+                <button onclick="closePopup()">Close</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+
+        // Favorite آئٹمز کو محفوظ رکھنے کے لیے
+localStorage.removeItem('favorites');
+
+let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
+// Favorite Toggle Function
+function toggleFavorite(itemId, name, price, image) {
+    const heartIcon = document.getElementById(`heart-${itemId}`);
+    const index = favorites.findIndex(item => item.id === itemId);
+
+    if (index === -1) {
+        favorites.push({ id: itemId, name, price, image });
+        heartIcon.classList.add('favorited');
+    } else {
+        favorites.splice(index, 1);
+        heartIcon.classList.remove('favorited');
+    }
+
+    // Save favorites to localStorage
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+}
+
+// Pre-select Favorites (Ensure that favorites are marked on page load)
+window.addEventListener('DOMContentLoaded', () => {
+    favorites.forEach(item => {
+        const heartIcon = document.getElementById(`heart-${item.id}`);
+        if (heartIcon) heartIcon.classList.add('favorited');
+    });
+});
+
+// Show Favorites Panel
+document.getElementById('favoritesBtn').addEventListener('click', function () {
+    const favoritesPanel = document.createElement('div');
+    favoritesPanel.className = 'favorites-panel active';
+    favoritesPanel.innerHTML = `
+        <div class="favorites-content">
+            <h4>Your Favorites ❤️</h4>
+            ${favorites.length ? favorites.map(item => `
+                <div class="favorite-item" onclick="window.location.href='/listings/${item.id}'">
+                    <img src="${item.image}" alt="${item.name}" class="fav-img">
+                    <div class="fav-details">
+                        <p>${item.name}</p>
+                        <i class="fa fa-heart favorited" onclick="event.stopPropagation(); toggleFavorite('${item.id}', '${item.name}', '${item.price}', '${item.image}'); this.parentElement.parentElement.remove();"></i>
+                    </div>
+                </div>
+            `).join('') : '<p>No favorite items yet!</p>'}
+            <button id="closeFavorites">Close</button>
+        </div>
+    `;
+    document.body.appendChild(favoritesPanel);
+
+    document.getElementById('closeFavorites').addEventListener('click', () => {
+        favoritesPanel.remove();
+    });
+});
+
+
+// Show Favorites Panel
+
+
+// Pre-select Favorites
+window.addEventListener('DOMContentLoaded', () => {
+    favorites.forEach(item => {
+        const heartIcon = document.getElementById(`heart-${item.id}`);
+        if (heartIcon) heartIcon.classList.add('favorited');
+    });
+});
+
+        function closePopup() {
+            const countryPopup = document.getElementById("countryPopup");
+            countryPopup.classList.remove("popup-visible");
+        }
+
+        function setCountry() {
+            const selectedCountry = document.getElementById("countrySelect").value;
+
+            fetch('/api/country', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ country: selectedCountry })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Error: " + data.error);
+                    return;
+                }
+
+                document.getElementById("selectedCountry").innerText = selectedCountry;
+
+                let currencySymbol = "Price Not Available";
+                if (selectedCountry === "Pakistan") {
+                    currencySymbol = "Rs";
+                } else if (selectedCountry === "UAE") {
+                    currencySymbol = "AED";
+                } else if (selectedCountry === "USA") {
+                    currencySymbol = "$";
+                }
+
+                data.prices.forEach(item => {
+                    const priceElement = document.querySelector(`.price[data-id="${item.id}"]`);
+                    if (priceElement) {
+                        priceElement.innerText = `${currencySymbol} : ${item.price}`;
+                    }
+                });
+
+                closePopup();
+            })
+            .catch(error => console.error("Error fetching prices:", error));
+        }
+
+        window.onload = function() {
+            const countryPopup = document.getElementById("countryPopup");
+            countryPopup.classList.add("popup-visible");
+        };
+
+        function filterCategory(category) {
+            const listings = document.querySelectorAll('.listing');
+            listings.forEach(listing => {
+                listing.style.transition = 'opacity 0.5s ease-in-out';
+                listing.style.opacity = 0;
+            });
+
+            setTimeout(() => {
+                listings.forEach(listing => {
+                    const listingCategory = listing.getAttribute('data-category');
+                    if (category === "All Items" || listingCategory === category) {
+                        listing.style.display = 'block';
+                        listing.style.opacity = 1;
+                    } else {
+                        listing.style.display = 'none';
+                    }
+                });
+                window.scrollTo({
+                    top: 720,
+                    behavior: 'smooth'
+                });
+            }, 500);
+        }
+    </script>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f5f5f5;
+        color: #333;
+    }
+
+    .favorites-panel {
+        position: fixed;
+        top: 0;
+        right: -400px;
+        width: 350px;
+        height: 100%;
+        background-color: #ffffff;
+        box-shadow: -2px 0 20px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        padding: 25px;
+        overflow-y: auto;
+        transition: transform 0.4s ease-in-out;
+        transform: translateX(100%);
+        border-radius: 15px 0 0 15px;
+    }
+
+    .favorites-panel.active {
+        transform: translateX(-100%);
+        right: 0;
+    }
+
+    .favorite-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        margin-top: 50px;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 15px;
+    }
+
+    .fav-img {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        margin-right: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .fav-details {
+        flex-grow: 1;
+    }
+
+    .favorited {
+        color: #ff4081;
+    }
+
+    .category-filter {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* 4 items per row */
+        gap: 15px;
+        margin: 25px 0;
+    }
+
+    .category-item {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 180px;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .category-item:hover {
+        transform: scale(1.05);
+    }
+
+    .category-btn {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 12px;
+        width: 100%;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        border: 1px solid #f0f0f0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .category-btn:hover {
+        background-color: #f1f1f1;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .category-image {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-bottom: 15px;
+        border: 2px solid #eaeaea;
+    }
+
+    .category-btn span {
+        font-size: 18px;
+        color: #333;
+        font-weight: 600;
+        margin-top: 10px;
+    }
+
+    #listingsContainer {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 30px;
+        padding: 40px;
+        transition: all 0.3s ease;
+    }
+
+    .listing-card {
+        background-color: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 25px;
+        text-align: center;
+    }
+
+    .listing-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .listing-img {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 15px;
+        margin-bottom: 25px;
+    }
+
+    .listing-title {
+        font-size: 22px;
+        color: #333;
+        margin-bottom: 10px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .price {
+        font-size: 18px;
+        color: #2e7d32;
+        margin: 12px 0;
+        font-weight: 600;
+    }
+
+    .stock-status {
+        font-size: 16px;
+        font-weight: 600;
+        margin-top: 10px;
+    }
+
+    .in-stock {
+        color: #28a745;
+    }
+
+    .out-stock {
+        color: #d32f2f;
+    }
+
+    .category, .company {
+        font-size: 14px;
+        color: #777;
+        margin-top: 12px;
+        font-weight: 500;
+    }
+
+    .add-to-cart-btn {
+        padding: 14px 25px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 30px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 18px;
+        margin-top: 18px;
+        transition: background-color 0.3s ease;
+        letter-spacing: 1px;
+    }
+
+    .add-to-cart-btn:hover {
+        background-color: #388e3c;
+    }
+
+    .popup {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+        z-index: 999;
+    }
+
+    .popup-visible {
+        display: flex;
+        opacity: 1;
+    }
+
+    .popup-content {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 20px;
+        text-align: center;
+        width: 350px;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    #countrySelect {
+        padding: 15px;
+        font-size: 18px;
+        margin-top: 15px;
+        width: 100%;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    #selectedCountryDisplay {
+        margin-top: 20px;
+        font-size: 20px;
+        color: #333;
+        font-weight: 700;
+    }
+</style>
+
+
+
+
+
+
+</body>

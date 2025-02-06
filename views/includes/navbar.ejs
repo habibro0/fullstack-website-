@@ -1,0 +1,53 @@
+<nav class="navbar navbar-expand-lg custom-navbar sticky-top shadow-sm">
+  <div class="container-fluid">
+    <!-- Brand Logo -->
+    <a class="navbar-brand" href="/">
+      <img src="/images/logo.png" alt="Brand Logo" class="navbar-logo">
+    </a>
+    
+    <!-- Toggler Button for Mobile -->
+    <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar Links -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active custom-nav-link" href="/listings">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link custom-nav-link" href="/listings">All Items</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link custom-nav-link" href="/listings/new">Create New Items</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link custom-nav-link" href="#" id="favoritesBtn">
+            ❤️ Favorites
+          </a>
+        </li>
+        
+        <li class="nav-item cart-section">
+          <a href="/cart" class="cart-icon">
+            <i class="fa-solid fa-cart-shopping"></i>
+          </a>
+          <a href="/cart" class="cart-details">
+            <span class="view-cart-text">View Your Cart</span>
+            <% if (typeof cartCount !== 'undefined' && cartCount > 0) { %>
+              <span class="cart-count">(<%= cartCount %>)</span>
+            <% } %>
+          </a>
+        </li>
+      </ul>
+
+      <!-- Search Form -->
+      <form class="d-flex custom-search-form" role="search" action="/search" method="GET">
+        <input class="form-control search-input" type="search" placeholder="Search for items..." aria-label="Search" name="query">
+        <button class="btn search-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+
